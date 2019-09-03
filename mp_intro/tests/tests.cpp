@@ -57,6 +57,15 @@ TEST_CASE("Rotate in_01.png", "[weight=1]") {
 
   REQUIRE(expected == actual);
 }
+TEST_CASE("Rotate in_03.png", "[weight=1]") {
+  rotate("tests/in_03.png", "tests/out.png");
+
+  PNG expected, actual;
+  expected.readFromFile("tests/out_03.png");
+  actual.readFromFile("tests/out.png");
+
+  REQUIRE(expected == actual);
+}
 
 TEST_CASE("Rotate in_02.png", "[weight=1]") {
   rotate("tests/in_02.png", "tests/out.png");
@@ -68,15 +77,7 @@ TEST_CASE("Rotate in_02.png", "[weight=1]") {
   REQUIRE(expected == actual);
 }
 
-TEST_CASE("Rotate in_03.png", "[weight=1]") {
-  rotate("tests/in_03.png", "tests/out.png");
 
-  PNG expected, actual;
-  expected.readFromFile("tests/out_03.png");
-  actual.readFromFile("tests/out.png");
-
-  REQUIRE(expected == actual);
-}
 
 bool compareColor(const HSLAPixel & p1, const HSLAPixel & p2) {
   if (p1.l == 0 && p2.l == 0) { return true; }
@@ -114,4 +115,3 @@ TEST_CASE("Creative artwork contains at least three unique colors", "[weight=5][
     FAIL("Creative artwork does not contian three unique colors.");
   }
 }
-

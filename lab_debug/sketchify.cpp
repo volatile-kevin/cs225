@@ -2,7 +2,7 @@
  * @file sketchify.cpp
  * Implementation of the sketchify function.
  */
-
+#pragma GCC diagnostic ignored "-Wuninitialized"
 #include <cstdlib>
 #include <cmath>
 

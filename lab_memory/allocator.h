@@ -30,6 +30,8 @@ class Allocator
      * Calls the solving routine to allocate student letter
      *  groups to rooms.
      */
+    ~Allocator();
+
     void allocate();
 
     /**

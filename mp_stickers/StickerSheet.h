@@ -21,7 +21,7 @@ class StickerSheet : public PNG{
     bool translate (unsigned index, unsigned x, unsigned y);
     void removeSticker (unsigned index);
     void copy(const StickerSheet &other);
-    void clear();
+    void destroy();
     Image * getSticker (unsigned index);
     Image render() const;
   private:

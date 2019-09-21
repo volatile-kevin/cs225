@@ -18,7 +18,7 @@ StickerSheet::StickerSheet(const Image &picture, unsigned max){
     }
 }
 StickerSheet::~StickerSheet(){
-    clear();
+    destroy();
 }
 void StickerSheet::copy(const StickerSheet &other){
     this->max_ = other.max_;
@@ -27,13 +27,13 @@ void StickerSheet::copy(const StickerSheet &other){
     this->coordinatesX_ = new unsigned[other.max_];
     this->coordinatesY_ = new unsigned[other.max_];
     this->numStickers_ = other.numStickers_;
-    for(unsigned int i = 0; i < this->numStickers_; i++){
+    for(unsigned int i = 0; i < this->max_; i++){
         this->picturesArr_[i] = other.picturesArr_[i];
         this->coordinatesX_[i] = other.coordinatesX_[i];
         this->coordinatesY_[i] = other.coordinatesY_[i];
   }
 }
-void StickerSheet::clear(){
+void StickerSheet::destroy(){
     delete[] picturesArr_;
     delete[] coordinatesX_;
     delete[] coordinatesY_;
@@ -42,37 +42,49 @@ StickerSheet::StickerSheet(const StickerSheet &other){
     copy(other);
 }
 const StickerSheet & StickerSheet::operator= (const StickerSheet &other){
-    clear();
+    destroy();
     copy(other);
     return *this;
 }
 void StickerSheet::changeMaxStickers (unsigned newMax){
+    if(newMax == max_){
+      return;
+    }
     Image **tempPicturesArr = new Image*[newMax];
     unsigned *tempCoordinatesX = new unsigned[newMax];
     unsigned *tempCoordinatesY = new unsigned[newMax];
     for(unsigned i = 0; i < newMax; i++){
       tempPicturesArr[i] = NULL;
     }
+    // extra stickers will get deleted
     if(newMax < numStickers_){
-        for(unsigned i = 0; i < numStickers_; i++){
-          if(i > newMax){
-            tempPicturesArr[i] = NULL;
-            delete tempPicturesArr[i];
-            continue;
-          }
-          *tempPicturesArr[i] = *picturesArr_[i];
+        for(unsigned i = 0; i < newMax; i++){
+          tempPicturesArr[i] = picturesArr_[i];
           tempCoordinatesX[i] = coordinatesX_[i];
           tempCoordinatesY[i] = coordinatesY_[i];
         }
         numStickers_ = newMax;
     }
+    // when newMax > numStickers_, allocate more space, preserve stickers
+    else{
+      for(unsigned i = 0; i < newMax; i++){
+        if (i >= numStickers_){
+          tempPicturesArr[i] = NULL;
+          tempCoordinatesX[i] = 0;
+          tempCoordinatesY[i] = 0;
+          continue;
+        }
+        if (picturesArr_[i] != NULL)
+          tempPicturesArr[i] = picturesArr_[i];
+        tempCoordinatesX[i] = coordinatesX_[i];
+        tempCoordinatesY[i] = coordinatesY_[i];
+      }
+    }
+    destroy();
     picturesArr_ = tempPicturesArr;
     coordinatesX_ = tempCoordinatesX;
     coordinatesY_ = tempCoordinatesY;
     max_ = newMax;
-    delete[] tempPicturesArr;
-    delete[] tempCoordinatesX;
-    delete[] tempCoordinatesY;
 }
 int StickerSheet::addSticker(Image &sticker, unsigned x, unsigned y){
     if(numStickers_ < max_){
@@ -93,7 +105,7 @@ int StickerSheet::addSticker(Image &sticker, unsigned x, unsigned y){
     return -1;
 }
 bool StickerSheet::translate (unsigned index, unsigned x, unsigned y){
-  if(numStickers_ >= index){
+  if(picturesArr_[index] == NULL){
     return false;
   }
   else {
@@ -108,15 +120,14 @@ void StickerSheet::removeSticker (unsigned index){
     }
     else {
       picturesArr_[index] = NULL;
-      for(unsigned i = index; i < numStickers_; i++){
+      for(unsigned i = index; i < numStickers_-1; i++){
         if(picturesArr_[i+1] != NULL){
           picturesArr_[i] = picturesArr_[i+1];
           coordinatesX_[i] = coordinatesX_[i+1];
           coordinatesY_[i] = coordinatesY_[i+1];
         }
       }
-      delete picturesArr_[numStickers_ - 1];
-      picturesArr_[numStickers_] = NULL;
+      picturesArr_[numStickers_-1] = NULL;
       numStickers_ -= 1;
       return;
     }
@@ -130,11 +141,11 @@ Image * StickerSheet::getSticker (unsigned index){
     }
 }
 Image StickerSheet::render() const{
-    Image outputImage = picture_;
+    Image outputImage;
     unsigned pictureWidth = picture_.width();
     unsigned pictureHeight = picture_.height();
-    unsigned maxWidth = 0;
-    unsigned maxHeight = 0;
+    unsigned maxWidth = pictureWidth;
+    unsigned maxHeight = pictureHeight;
     for(unsigned i = 0; i < numStickers_; i++){
       if(picturesArr_[i] != NULL){
          if(coordinatesX_[i] + picturesArr_[i]->width() > pictureWidth) {
@@ -145,11 +156,14 @@ Image StickerSheet::render() const{
          }
       }
     }
+    outputImage = picture_;
     outputImage.resize(maxWidth, maxHeight);
+    outputImage.writeToFile("fuckkevinhu.png");
+
     for(unsigned i = 0; i < numStickers_; i++){
       if(picturesArr_[i] != NULL){
-        for(unsigned x = coordinatesX_[i]; x < maxWidth; x++){
-          for(unsigned y = coordinatesY_[i]; y < maxHeight; y++){
+        for(unsigned x = coordinatesX_[i]; x - coordinatesX_[i] < picturesArr_[i]->width(); x++){
+          for(unsigned y = coordinatesY_[i]; y - coordinatesY_[i] < picturesArr_[i]->height(); y++){
             if(picturesArr_[i]->getPixel(x - coordinatesX_[i], y - coordinatesY_[i]).a != 0){
               outputImage.getPixel(x, y) =  picturesArr_[i]->getPixel(x - coordinatesX_[i], y - coordinatesY_[i]);
             }

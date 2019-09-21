@@ -8,8 +8,11 @@ void Image::lighten(){
   for (unsigned int i = 0; i < this->width(); i++){
     for (unsigned int j = 0; j < this->height(); j++){
       HSLAPixel & pixel = this->getPixel(i, j);
-      if (pixel.l <= 1 && pixel.l >= 0){
+      if (pixel.l < 1 && pixel.l >= 0){
         pixel.l += 0.1;
+        if(pixel.l > 1){
+          pixel.l = 1;
+        }
       }
       else {
         pixel.l = 1;
@@ -21,8 +24,11 @@ void Image::lighten(double amount){
   for (unsigned int i = 0; i < this->width(); i++){
     for (unsigned int j = 0; j < this->height(); j++){
       HSLAPixel & pixel = this->getPixel(i, j);
-      if (pixel.l <= 1 && pixel.l >= 0){
+      if (pixel.l < 1 && pixel.l >= 0){
         pixel.l += amount;
+        if(pixel.l > 1){
+          pixel.l = 1;
+        }
       }
       else {
         pixel.l = 1;
@@ -34,8 +40,11 @@ void Image::darken(){
   for (unsigned int i = 0; i < this->width(); i++){
     for (unsigned int j = 0; j < this->height(); j++){
       HSLAPixel & pixel = this->getPixel(i, j);
-      if (pixel.l <= 1 && pixel.l >= 0){
+      if (pixel.l <= 1 && pixel.l > 0){
         pixel.l -= 0.1;
+        if(pixel.l < 0){
+          pixel.l = 0;
+        }
       }
       else {
         pixel.l = 1;
@@ -47,8 +56,11 @@ void Image::darken(double amount){
   for (unsigned int i = 0; i < this->width(); i++){
     for (unsigned int j = 0; j < this->height(); j++){
       HSLAPixel & pixel = this->getPixel(i, j);
-      if (pixel.l <= 1 && pixel.l >= 0){
+      if (pixel.l <= 1 && pixel.l > 0){
         pixel.l -= amount;
+        if(pixel.l < 0){
+          pixel.l = 0;
+        }
       }
       else {
         pixel.l = 1;

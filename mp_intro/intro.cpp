@@ -171,9 +171,24 @@ for(unsigned a = 0; a<width-1; ++a){
     if(pixel1.l != .45 && pixel2.l != .45 && pixel3.l != .45 && pixel4.l != .45){
       pixel.l = 0;
     }
+  }
 
+}
+for(unsigned a = 0; a<width-1; ++a){
+  for(unsigned b = 0; b<height-1; ++b){
+    cs225::HSLAPixel & pixel = png.getPixel(a, b);
+    cs225::HSLAPixel & pixel1 = png.getPixel(a+1, b);
+    cs225::HSLAPixel & pixel2 = png.getPixel(a, b+1);
+    cs225::HSLAPixel & pixel3 = png.getPixel(a+1, b+1);
+    cs225::HSLAPixel & pixel4 = png.getPixel(a-1, b);
+    cs225::HSLAPixel & pixel5 = png.getPixel(a, b-1);
+    cs225::HSLAPixel & pixel6 = png.getPixel(a-1, b-1);
+    cs225::HSLAPixel & pixel7 = png.getPixel(a+1, b-1);
+    cs225::HSLAPixel & pixel8 = png.getPixel(a-1, b+1);
 
-
+    if(pixel1.l == 0 && pixel2.l != 0 && pixel3.l != 0 && pixel4.l != 0){
+      pixel.l = 0;
+    }
   }
 }
 //Code based on http://warp.povusers.org/Mandelbrot/

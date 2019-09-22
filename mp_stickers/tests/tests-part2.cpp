@@ -296,6 +296,7 @@ TEST_CASE("A Stickersheet with stickers placed beyond base image boundaries work
 
   const Image &renderXBound = sheet.render();
 
+
   REQUIRE( renderXBound.width() == i.width() + 800 );
   REQUIRE( renderXBound.height() == alma.height() );
 
@@ -332,4 +333,3 @@ TEST_CASE("A Stickersheet with stickers placed beyond base image boundaries work
 
   REQUIRE( sheet.render() == alma );
 }
-

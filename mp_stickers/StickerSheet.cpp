@@ -120,11 +120,15 @@ void StickerSheet::removeSticker (unsigned index){
     }
     else {
       picturesArr_[index] = NULL;
+      delete picturesArr_[index];
       for(unsigned i = index; i < numStickers_-1; i++){
         if(picturesArr_[i+1] != NULL){
           picturesArr_[i] = picturesArr_[i+1];
           coordinatesX_[i] = coordinatesX_[i+1];
           coordinatesY_[i] = coordinatesY_[i+1];
+        }
+        else if (picturesArr_[i+1] == NULL){
+          delete picturesArr_[i+1];
         }
       }
       picturesArr_[numStickers_-1] = NULL;

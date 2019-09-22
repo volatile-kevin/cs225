@@ -18,7 +18,12 @@ StickerSheet::StickerSheet(const Image &picture, unsigned max){
     }
 }
 StickerSheet::~StickerSheet(){
+  // for(unsigned i = 0; i < numStickers_; i++){
+  //   delete picturesArr_[i];
+  //   picturesArr_[i] = NULL;
+  // }
     destroy();
+
 }
 void StickerSheet::copy(const StickerSheet &other){
     this->max_ = other.max_;
@@ -34,6 +39,9 @@ void StickerSheet::copy(const StickerSheet &other){
   }
 }
 void StickerSheet::destroy(){
+  // for(unsigned i = 0; i < numStickers_; i++){
+  //   delete picturesArr_[i];
+  // }
     delete[] picturesArr_;
     delete[] coordinatesX_;
     delete[] coordinatesY_;
@@ -92,7 +100,7 @@ int StickerSheet::addSticker(Image &sticker, unsigned x, unsigned y){
 
         if(picturesArr_[i] == NULL){
 
-          picturesArr_[i] = new Image(sticker);
+          picturesArr_[i] = &sticker;
           coordinatesX_[i] = x;
           coordinatesY_[i] = y;
           numStickers_ += 1;
@@ -132,6 +140,7 @@ void StickerSheet::removeSticker (unsigned index){
         }
       }
       picturesArr_[numStickers_-1] = NULL;
+      delete picturesArr_[numStickers_-1];
       numStickers_ -= 1;
       return;
     }

@@ -184,24 +184,8 @@ void Image::scale(double factor){
   delete scaledImage;
 }
 void Image::scale(unsigned w, unsigned h){
-  PNG* scaledImage = new PNG(w, h);
-  for (unsigned int i = 0; i < w; i++){
-    for (unsigned int j = 0; j < h; j++){
-      HSLAPixel & pixel = scaledImage->getPixel(i, j);
-      unsigned int correspondingI = (unsigned int) (0.5 + this->width() * i / w);
-      unsigned int correspondingJ = (unsigned int) (0.5 + this->height() * j / h);
-      pixel = this->getPixel(correspondingI, correspondingJ);
-    }
-  }
-
-  this->resize(w, h);
-  for (unsigned int i = 0; i < w; i++){
-    for (unsigned int j = 0; j < h; j++){
-      HSLAPixel & pixel = scaledImage->getPixel(i, j);
-      HSLAPixel & tempPixel = this->getPixel(i, j);
-      tempPixel = pixel;
-    }
-  }
-
-  delete scaledImage;
+  double widthFactor = w / this->width();
+  double heightFactor = h / this->height();
+  double minFactor = min(widthFactor, heightFactor);
+  scale(minFactor);
 }

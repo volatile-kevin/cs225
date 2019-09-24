@@ -187,5 +187,12 @@ void Image::scale(unsigned w, unsigned h){
   double widthFactor = w / this->width();
   double heightFactor = h / this->height();
   double minFactor = min(widthFactor, heightFactor);
+  /*
+  if (min(widthFactor, heightFactor) == widthFactor && widthFactor == 0){
+    minFactor = heightFactor;
+  }
+  if (min(widthFactor, heightFactor) == heightFactor && heightFactor == 0){
+    minFactor = widthFactor;
+  } */
   scale(minFactor);
 }

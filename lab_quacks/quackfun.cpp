@@ -29,9 +29,22 @@ namespace QuackFun {
 template <typename T>
 T sum(stack<T>& s)
 {
+    float stackSum = 0;
+    T temp;
+
+    if(s.empty()){
+      return 0;
+    }
+
+    temp = s.top();
+    s.pop();
+    stackSum = sum(s) + temp;
+    s.push(temp);
+
+  return stackSum;
 
     // Your code here
-    return T(); // stub return value (0 for primitive types). Change this!
+    // stub return value (0 for primitive types). Change this!
                 // Note: T() is the default value for objects, and 0 for
                 // primitive types
 }
@@ -55,9 +68,30 @@ T sum(stack<T>& s)
  */
 bool isBalanced(queue<char> input)
 {
+    char c;
 
+    stack<char> s;
+
+    for(unsigned long i = 0; i < input.size(); i++){
+      c = input.front();
+      if(c == '['){
+        s.push(c);
+      }
+      else if(c == ']'){
+        if(s.empty()){
+          return false;
+        }
+        s.pop();
+      }
+      input.pop();
+      input.push(c);
+    }
+
+    if(s.empty()){
+      return true;
+    }
     // @TODO: Make less optimistic
-    return true;
+    return false;
 }
 
 /**
@@ -79,9 +113,43 @@ template <typename T>
 void scramble(queue<T>& q)
 {
     stack<T> s;
+    queue<T> tempQ;
     // optional: queue<T> q2;
 
     // Your code here
+    int groupSize = 1;
+    T temp;
+    while (q.empty() == false){
+        if(groupSize % 2 == 0){
+          for(int i = 0; i < groupSize; i++){
+            if(q.empty() == false){
+              temp = q.front();
+              q.pop();
+              s.push(temp);
+            }
+          }
+          while(s.empty() == false){
+            temp = s.top();
+            tempQ.push(temp);
+            s.pop();
+          }
+        }
+        else{
+          for(int i = 0; i < groupSize; i++){
+            temp = q.front();
+            q.pop();
+            tempQ.push(temp);
+          }
+        }
+      groupSize++;
+    }
+
+    while(tempQ.empty() == false){
+      temp = tempQ.front();
+      q.push(temp);
+      tempQ.pop();
+    }
+    return;
 }
 
 /**
@@ -109,9 +177,9 @@ void scramble(queue<T>& q)
 template <typename T>
 bool verifySame(stack<T>& s, queue<T>& q)
 {
-    bool retval = true; // optional
-    // T temp1; // rename me
-    // T temp2; // rename :)
+    bool retval = false; // optional
+    T temp1; // rename me
+    T temp2; // rename :)
 
     // Your code here
 

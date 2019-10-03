@@ -4,10 +4,11 @@
  */
 
 template <class T>
-List<T>::List() { 
+List<T>::List() {
   // @TODO: graded in MP3.1
-    ListNode* head_ = NULL;
-    ListNode* tail_ = NULL;
+    head_ = NULL;
+    tail_ = NULL;
+    length_ = 0;
 }
 
 /**
@@ -17,7 +18,7 @@ List<T>::List() {
 template <typename T>
 typename List<T>::ListIterator List<T>::begin() const {
   // @TODO: graded in MP3.1
-  return List<T>::ListIterator(NULL);
+  return List<T>::ListIterator(head_);
 }
 
 /**
@@ -36,7 +37,16 @@ typename List<T>::ListIterator List<T>::end() const {
  */
 template <typename T>
 void List<T>::_destroy() {
+  ListNode * curr = head_;
+  ListNode * temp;
+
+  while(curr != NULL){
+    temp = curr->next;
+    delete curr;
+    curr = temp;
+  }
   /// @todo Graded in MP3.1
+  return;
 }
 
 /**
@@ -51,14 +61,15 @@ void List<T>::insertFront(T const & ndata) {
   ListNode * newNode = new ListNode(ndata);
   newNode -> next = head_;
   newNode -> prev = NULL;
-  
+
   if (head_ != NULL) {
     head_ -> prev = newNode;
   }
   if (tail_ == NULL) {
     tail_ = newNode;
   }
-  
+
+  head_ = newNode;
 
   length_++;
 
@@ -73,6 +84,19 @@ void List<T>::insertFront(T const & ndata) {
 template <typename T>
 void List<T>::insertBack(const T & ndata) {
   /// @todo Graded in MP3.1
+  ListNode * newNode = new ListNode(ndata);
+  newNode -> next = NULL;
+  newNode -> prev = tail_;
+
+  if(tail_ != NULL){
+    tail_->next = newNode;
+  }
+  if(head_ == NULL){
+    head_ = newNode;
+  }
+
+  tail_ = newNode;
+  length_++;
 }
 
 /**
@@ -94,9 +118,13 @@ void List<T>::insertBack(const T & ndata) {
 template <typename T>
 typename List<T>::ListNode * List<T>::split(ListNode * start, int splitPoint) {
   /// @todo Graded in MP3.1
+  if(splitPoint == 0){
+    return start;
+  }
+
   ListNode * curr = start;
 
-  for (int i = 0; i < splitPoint || curr != NULL; i++) {
+  for (int i = 0; curr != NULL && i < splitPoint; i++) {
     curr = curr->next;
   }
 
@@ -104,8 +132,9 @@ typename List<T>::ListNode * List<T>::split(ListNode * start, int splitPoint) {
       curr->prev->next = NULL;
       curr->prev = NULL;
   }
+  length_ -= splitPoint;
 
-  return NULL;
+  return curr;
 }
 
 /**
@@ -120,6 +149,33 @@ typename List<T>::ListNode * List<T>::split(ListNode * start, int splitPoint) {
 template <typename T>
 void List<T>::waterfall() {
   /// @todo Graded in MP3.1
+  ListNode * curr = head_;
+  ListNode * temp;
+
+  if(head_ != NULL){
+    curr = curr->next;
+  }
+  int count = 0;
+  while(curr != tail_ && curr != NULL){
+    temp = curr;
+    curr->prev->next = curr->next;
+    if(curr->next)
+    curr->next->prev = curr->prev;
+    temp->prev = tail_;
+    tail_->next = temp;
+    tail_ = temp;
+    temp->next = NULL;
+    curr = curr->next;
+    if(curr)
+      curr = curr->next;
+    count++;
+    std::cout << "COUNT: " << count << std::endl;
+  }
+  // temp = head_;
+  // while(temp){
+  //   std::cout << temp->data << endl;
+  //   temp = temp->next;
+  // }
 }
 
 /**

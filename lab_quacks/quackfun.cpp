@@ -182,6 +182,7 @@ bool verifySame(stack<T>& s, queue<T>& q)
     T temp2; // rename :)
 
     // Your code here
+    
 
     return retval;
 }

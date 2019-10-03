@@ -152,30 +152,29 @@ void List<T>::waterfall() {
   ListNode * curr = head_;
   ListNode * temp;
 
-  if(head_ != NULL){
-    curr = curr->next;
+  if(curr == NULL){
+    return;
   }
   int count = 0;
   while(curr != tail_ && curr != NULL){
-    temp = curr;
-    curr->prev->next = curr->next;
-    if(curr->next)
-    curr->next->prev = curr->prev;
-    temp->prev = tail_;
-    tail_->next = temp;
-    tail_ = temp;
-    temp->next = NULL;
-    curr = curr->next;
-    if(curr)
+    if(count % 2 == 1){
+      //remove element
+      curr->prev->next = curr->next;
+      curr->next->prev = curr->prev;
+      temp = curr;
       curr = curr->next;
+      temp->next = NULL;
+
+      //append to back
+      tail_->next = temp;
+      temp->prev = tail_;
+      tail_ = temp;
+    }
+    else{
+      curr = curr->next;
+    }
     count++;
-    std::cout << "COUNT: " << count << std::endl;
   }
-  // temp = head_;
-  // while(temp){
-  //   std::cout << temp->data << endl;
-  //   temp = temp->next;
-  // }
 }
 
 /**
@@ -200,6 +199,18 @@ void List<T>::reverse() {
 template <typename T>
 void List<T>::reverse(ListNode *& startPoint, ListNode *& endPoint) {
   /// @todo Graded in MP3.2
+  Listnode * temp;
+  Listnode * curr = startPoint;
+
+  while(curr != endPoint && curr != NULL){
+    temp = curr->prev;
+    curr->prev = curr->next;
+    curr->next = temp;
+    curr = curr->prev;
+  }
+  if(temp != NULL){
+    startPoint = temp->prev;
+  }
 }
 
 /**

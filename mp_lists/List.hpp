@@ -309,7 +309,46 @@ void List<T>::mergeWith(List<T> & otherList) {
 template <typename T>
 typename List<T>::ListNode * List<T>::merge(ListNode * first, ListNode* second) {
   /// @todo Graded in MP3.2
-  return NULL;
+  ListNode * tempA = first;
+  ListNode * tempB = second;
+  ListNode * newHead;
+  tempA = first;
+  tempB = second;
+
+  if(std::min(tempA->data, tempB->data) == tempA->data){
+    newHead = tempA;
+    tempA = tempA->next;
+  }
+  else{
+    newHead = tempB;
+    tempB = tempB->next;
+  }
+  ListNode * curr= newHead;
+  while(tempA != NULL && tempB != NULL){
+    if(std::min(tempA->data, tempB->data) == tempA->data){
+      curr->next = tempA;
+      tempA->prev = curr;
+      tempA = tempA->next;
+    }
+    else{
+      curr->next = tempB;
+      tempB->prev = curr;
+      tempB = tempB->next;
+    }
+    curr = curr->next;
+
+    if(tempA != NULL && tempB == NULL){
+      curr->next = tempA;
+      tempA->prev = curr;
+    }
+    else if(tempA == NULL && tempB != NULL){
+      curr->next = tempB;
+      tempB->prev = curr;
+    }
+  }
+
+
+  return newHead;
 }
 
 /**

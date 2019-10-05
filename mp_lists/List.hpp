@@ -309,46 +309,44 @@ void List<T>::mergeWith(List<T> & otherList) {
 template <typename T>
 typename List<T>::ListNode * List<T>::merge(ListNode * first, ListNode* second) {
   /// @todo Graded in MP3.2
-  ListNode * tempA = first;
-  ListNode * tempB = second;
-  ListNode * newHead;
-  tempA = first;
-  tempB = second;
 
-  if(std::min(tempA->data, tempB->data) == tempA->data){
-    newHead = tempA;
-    tempA = tempA->next;
-  }
-  else{
-    newHead = tempB;
-    tempB = tempB->next;
-  }
-  ListNode * curr= newHead;
-  while(tempA != NULL && tempB != NULL){
-    if(std::min(tempA->data, tempB->data) == tempA->data){
-      curr->next = tempA;
-      tempA->prev = curr;
-      tempA = tempA->next;
-    }
-    else{
-      curr->next = tempB;
-      tempB->prev = curr;
-      tempB = tempB->next;
-    }
-    curr = curr->next;
+  ListNode* tempA = NULL;
+  ListNode* tempB = NULL;
+  ListNode* merge = NULL;
+  ListNode* temp = NULL;
 
-    if(tempA != NULL && tempB == NULL){
-      curr->next = tempA;
-      tempA->prev = curr;
-    }
-    else if(tempA == NULL && tempB != NULL){
-      curr->next = tempB;
-      tempB->prev = curr;
-    }
+  if (first->data < second->data)
+  {
+      merge = first;
+      tempB = second;
+      tempA = first;
+  }
+  else
+  {
+      merge = second;
+      tempB = first;
+      tempA = second;
   }
 
+  while (tempA->next != NULL)
+  {
+      if (!(tempA->next->data < tempB->data || tempA->next->data == tempB->data))
+      {
+          temp = tempA->next;
+          tempA->next = tempB;
+          tempA = tempB;
+          tempB->prev = tempA;
+          tempA = tempB;
+          tempB = temp;
+      }
+      else
+      {
+          tempA = tempA->next;
+      }
+  }
 
-  return newHead;
+  tempA->next = tempB;
+  return merge;
 }
 
 /**
@@ -365,5 +363,16 @@ typename List<T>::ListNode * List<T>::merge(ListNode * first, ListNode* second) 
 template <typename T>
 typename List<T>::ListNode* List<T>::mergesort(ListNode * start, int chainLength) {
   /// @todo Graded in MP3.2
-  return NULL;
+  if(chainLength == 1){
+    return start;
+  }
+  int newLength = chainLength/2;
+  ListNode * secondHead;
+  secondHead = split(start, newLength);
+  start = mergesort(start, newLength);
+  secondHead = mergesort(secondHead, chainLength - newLength);
+
+  ListNode * newHead =  merge(start, secondHead);
+
+  return newHead;
 }

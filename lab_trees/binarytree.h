@@ -12,6 +12,7 @@
 #include <sstream>
 #include <random>
 
+using std::vector;
 /**
  * The BinaryTree class represents a templated linked-memory tree data
  * structure.
@@ -121,6 +122,7 @@ class BinaryTree
          */
         void mirror();
 
+
         /**
          * isOrdered() function iterative version
          * @return True if an in-order traversal of the tree would produce a
@@ -193,7 +195,16 @@ class BinaryTree
         void printLeftToRight(const Node* subRoot) const;
 
 
+        void mirror(Node * root);
 
+        bool isOrderedIterative(Node* subRoot) const;
+        bool isOrderedRecursive(Node* subRoot, int, int) const;
+
+        void getPaths(Node * subRoot,
+                      vector<vector<T>>& paths,
+                      vector<T>& curr) const;
+
+        int sumDistances(Node * subRoot, int) const;
 
         /**
          * Private helper function for the sorted public insert function.

@@ -6,6 +6,23 @@
  */
 double AbstractSyntaxTree::eval() const {
     // @TODO Your code goes here...
-    return -1;
+    return eval(root);
+}
+
+
+double AbstractSyntaxTree::eval(Node* node) const {
+    if (node == NULL) return 0;
+
+    if (node->elem == "+") {
+        return eval(node->left) + eval(node->right);
+    } else if (node->elem == "-") {
+        return eval(node->left) - eval(node->right);
+    } else if (node->elem == "*") {
+        return eval(node->left) * eval(node->right);
+    } else if (node->elem == "/") {
+        return eval(node->left) / eval(node->right);
+    } else {
+        return std::stod(node->elem);
+    }
 }
 

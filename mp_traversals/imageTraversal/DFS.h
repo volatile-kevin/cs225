@@ -34,5 +34,9 @@ public:
 
 private:
 	/** @todo [Part 1] */
+  PNG png_;
+  Point start_;
+  double tolerance_;
+  std::stack<Point> s;
 	/** add private members here*/
 };

@@ -4,20 +4,21 @@
 #pragma once
 
 #include <iterator>
+#include <vector>
+
 #include "../cs225/HSLAPixel.h"
 #include "../cs225/PNG.h"
 #include "../Point.h"
-
 using namespace cs225;
 
 /**
  * A base class for traversal algorithms on images.
  *
  * BFS and DFS will inherit from this class
- * 
+ *
  * Each derived class must maintain an ordering of points on an image,
  * through calls to the virtual member functions `add` and `pop`.
- * 
+ *
  * A derived class provides a traversal by returning instances of
  * ImageTraversal::Iterator.
  */
@@ -36,11 +37,12 @@ public:
 
     /** @todo [Part 1] */
     /** add member functions if neccesary*/
-
+    Iterator(ImageTraversal* traversal, Point start);
   private:
     /** @todo [Part 1] */
     /** add private members here if neccesary*/
-
+    ImageTraversal* traversal_;
+    Point currentPos_;
   };
 
   /**
@@ -76,6 +78,7 @@ public:
    */
   virtual bool empty() const = 0;
 
-private:
-  static double calculateDelta(const HSLAPixel & p1, const HSLAPixel & p2);  
+public:
+  static double calculateDelta(const HSLAPixel & p1, const HSLAPixel & p2);
+  std::vector<std::vector<bool>> vectorVisited;
 };

@@ -34,5 +34,9 @@ public:
 
 private:
   /** @todo [Part 1] */
+  PNG png_;
+  Point start_;
+  double tolerance_;
+  std::queue<Point> q;
   /** add private members here*/
 };

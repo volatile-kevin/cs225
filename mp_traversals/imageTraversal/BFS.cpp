@@ -22,8 +22,19 @@ using namespace cs225;
  * @param tolerance If the current point is too different (difference larger than tolerance) with the start point,
  * it will not be included in this BFS
  */
-BFS::BFS(const PNG & png, const Point & start, double tolerance) {  
+BFS::BFS(const PNG & png, const Point & start, double tolerance) {
   /** @todo [Part 1] */
+  png_ = png;
+  start_ = start;
+  tolerance_ = tolerance;
+  for(unsigned int i = 0; i < png_.width(); i++){
+    std::vector<bool> rows;
+    for(unsigned int j = 0; j < png_.height(); j++){
+      rows.push_back(false);
+    }
+    vectorVisited.push_back(rows);
+  }
+  add(start_);
 }
 
 /**
@@ -31,7 +42,7 @@ BFS::BFS(const PNG & png, const Point & start, double tolerance) {
  */
 ImageTraversal::Iterator BFS::begin() {
   /** @todo [Part 1] */
-  return ImageTraversal::Iterator();
+  return ImageTraversal::Iterator(this, start_);
 }
 
 /**
@@ -47,6 +58,12 @@ ImageTraversal::Iterator BFS::end() {
  */
 void BFS::add(const Point & point) {
   /** @todo [Part 1] */
+  if(point.x < png_.width() && point.y < png_.height() && vectorVisited[point.x][point.y] == false){
+    if(calculateDelta(png_.getPixel(point.x, point.y), png_.getPixel(start_.x, start_.y)) < tolerance_){
+      q.push(point);
+    }
+  }
+  return;
 }
 
 /**
@@ -54,7 +71,9 @@ void BFS::add(const Point & point) {
  */
 Point BFS::pop() {
   /** @todo [Part 1] */
-  return Point(0, 0);
+  Point front = q.front();
+  q.pop();
+  return front;
 }
 
 /**
@@ -62,7 +81,10 @@ Point BFS::pop() {
  */
 Point BFS::peek() const {
   /** @todo [Part 1] */
-  return Point(0, 0);
+  if(q.empty() == true){
+    return Point(0, 0);
+  }
+  return q.front();
 }
 
 /**
@@ -70,5 +92,5 @@ Point BFS::peek() const {
  */
 bool BFS::empty() const {
   /** @todo [Part 1] */
-  return true;
+  return q.empty();
 }

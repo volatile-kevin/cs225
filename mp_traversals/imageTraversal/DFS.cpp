@@ -16,14 +16,25 @@
 /**
  * Initializes a depth-first ImageTraversal on a given `png` image,
  * starting at `start`, and with a given `tolerance`.
- * 
+ *
  * @param png The image this DFS is going to traverse
  * @param start The start point of this DFS
  * @param tolerance If the current point is too different (difference larger than tolerance) with the start point,
  * it will not be included in this DFS
  */
-DFS::DFS(const PNG & png, const Point & start, double tolerance) {  
+DFS::DFS(const PNG & png, const Point & start, double tolerance) {
   /** @todo [Part 1] */
+  png_ = png;
+  start_ = start;
+  tolerance_ = tolerance;
+  for(unsigned int i = 0; i < png_.width(); i++){
+    std::vector<bool> rows;
+    for(unsigned int j = 0; j < png_.height(); j++){
+      rows.push_back(false);
+    }
+    vectorVisited.push_back(rows);
+  }
+  add(start_);
 }
 
 /**
@@ -31,7 +42,7 @@ DFS::DFS(const PNG & png, const Point & start, double tolerance) {
  */
 ImageTraversal::Iterator DFS::begin() {
   /** @todo [Part 1] */
-  return ImageTraversal::Iterator();
+  return ImageTraversal::Iterator(this, start_);
 }
 
 /**
@@ -47,6 +58,12 @@ ImageTraversal::Iterator DFS::end() {
  */
 void DFS::add(const Point & point) {
   /** @todo [Part 1] */
+  if(point.x < png_.width() && point.y < png_.height() && vectorVisited[point.x][point.y] == false){
+    if(calculateDelta(png_.getPixel(point.x, point.y), png_.getPixel(start_.x, start_.y)) < tolerance_){
+      s.push(point);
+    }
+  }
+  return;
 }
 
 /**
@@ -54,7 +71,9 @@ void DFS::add(const Point & point) {
  */
 Point DFS::pop() {
   /** @todo [Part 1] */
-  return Point(0, 0);
+  Point top = s.top();
+  s.pop();
+  return top;
 }
 
 /**
@@ -62,7 +81,10 @@ Point DFS::pop() {
  */
 Point DFS::peek() const {
   /** @todo [Part 1] */
-  return Point(0, 0);
+  if(s.empty() == true){
+    return Point(0, 0);
+  }
+  return s.top();
 }
 
 /**
@@ -70,5 +92,5 @@ Point DFS::peek() const {
  */
 bool DFS::empty() const {
   /** @todo [Part 1] */
-  return true;
+  return s.empty();
 }

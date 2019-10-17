@@ -33,6 +33,13 @@ double ImageTraversal::calculateDelta(const HSLAPixel & p1, const HSLAPixel & p2
  */
 ImageTraversal::Iterator::Iterator() {
   /** @todo [Part 1] */
+  currentPos_ = Point(0, 0);
+  traversal_ = NULL;
+}
+
+ImageTraversal::Iterator::Iterator(ImageTraversal* traversal, Point start){
+  currentPos_ = start;
+  traversal_ = traversal;
 }
 
 /**
@@ -42,6 +49,31 @@ ImageTraversal::Iterator::Iterator() {
  */
 ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
   /** @todo [Part 1] */
+  if(traversal_ != NULL && traversal_->empty() == false){
+    currentPos_ = traversal_->pop();
+    traversal_->vectorVisited[currentPos_.x][currentPos_.y] = true;
+
+    Point neighbor1 = Point(currentPos_.x + 1, currentPos_.y);
+    Point neighbor2 = Point(currentPos_.x, currentPos_.y + 1);
+    Point neighbor3 = Point(currentPos_.x - 1, currentPos_.y);
+    Point neighbor4 = Point(currentPos_.x, currentPos_.y - 1);
+
+    traversal_->add(neighbor1);
+    traversal_->add(neighbor2);
+    traversal_->add(neighbor3);
+    traversal_->add(neighbor4);
+
+    if(traversal_->empty() == true){
+      return *this;
+    }
+
+    currentPos_ = traversal_->peek();
+
+    while((traversal_->empty() == false) && traversal_->vectorVisited[currentPos_.x][currentPos_.y] == true){
+      traversal_->pop();
+      currentPos_ = traversal_->peek();
+    }
+  }
   return *this;
 }
 
@@ -52,7 +84,7 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
  */
 Point ImageTraversal::Iterator::operator*() {
   /** @todo [Part 1] */
-  return Point(0, 0);
+  return currentPos_;
 }
 
 /**
@@ -62,6 +94,26 @@ Point ImageTraversal::Iterator::operator*() {
  */
 bool ImageTraversal::Iterator::operator!=(const ImageTraversal::Iterator &other) {
   /** @todo [Part 1] */
-  return false;
+  bool end, otherEnd;
+  if(traversal_ == NULL || (traversal_->empty() == true)){
+    end = true;
+  }
+  else{
+    end = false;
+  }
+  if(other.traversal_ == NULL || (other.traversal_->empty() == true)){
+    otherEnd = true;
+  }
+  else{
+    otherEnd = false;
+  }
+  if(end == otherEnd){
+    return false;
+  }
+  if(currentPos_ == other.currentPos_){
+    return false;
+  }
+  else{
+    return true;
+  }
 }
-

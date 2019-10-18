@@ -42,7 +42,7 @@ DFS::DFS(const PNG & png, const Point & start, double tolerance) {
  */
 ImageTraversal::Iterator DFS::begin() {
   /** @todo [Part 1] */
-  return ImageTraversal::Iterator(this, start_);
+  return ImageTraversal::Iterator(this, start_, tolerance_);
 }
 
 /**
@@ -51,6 +51,7 @@ ImageTraversal::Iterator DFS::begin() {
 ImageTraversal::Iterator DFS::end() {
   /** @todo [Part 1] */
   return ImageTraversal::Iterator();
+
 }
 
 /**
@@ -59,6 +60,7 @@ ImageTraversal::Iterator DFS::end() {
 void DFS::add(const Point & point) {
   /** @todo [Part 1] */
   if(point.x < png_.width() && point.y < png_.height() && vectorVisited[point.x][point.y] == false){
+    // std::cout << calculateDelta(png_.getPixel(point.x, point.y), png_.getPixel(start_.x, start_.y)) << " DFS" << std::endl;
     if(calculateDelta(png_.getPixel(point.x, point.y), png_.getPixel(start_.x, start_.y)) < tolerance_){
       s.push(point);
     }

@@ -42,7 +42,7 @@ BFS::BFS(const PNG & png, const Point & start, double tolerance) {
  */
 ImageTraversal::Iterator BFS::begin() {
   /** @todo [Part 1] */
-  return ImageTraversal::Iterator(this, start_);
+  return ImageTraversal::Iterator(this, start_, tolerance_);
 }
 
 /**
@@ -59,6 +59,7 @@ ImageTraversal::Iterator BFS::end() {
 void BFS::add(const Point & point) {
   /** @todo [Part 1] */
   if(point.x < png_.width() && point.y < png_.height() && vectorVisited[point.x][point.y] == false){
+    // std::cout << calculateDelta(png_.getPixel(point.x, point.y), png_.getPixel(start_.x, start_.y)) << " BFS" << std::endl;
     if(calculateDelta(png_.getPixel(point.x, point.y), png_.getPixel(start_.x, start_.y)) < tolerance_){
       q.push(point);
     }

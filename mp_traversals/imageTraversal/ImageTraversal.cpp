@@ -33,13 +33,15 @@ double ImageTraversal::calculateDelta(const HSLAPixel & p1, const HSLAPixel & p2
  */
 ImageTraversal::Iterator::Iterator() {
   /** @todo [Part 1] */
-  currentPos_ = Point(0, 0);
+  // currentPos_ = Point(0, 0);
   traversal_ = NULL;
+  tolerance_ = 0;
 }
 
-ImageTraversal::Iterator::Iterator(ImageTraversal* traversal, Point start){
+ImageTraversal::Iterator::Iterator(ImageTraversal* traversal, Point start, double tolerance){
   currentPos_ = start;
   traversal_ = traversal;
+  tolerance_ = tolerance;
 }
 
 /**
@@ -53,15 +55,15 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
     currentPos_ = traversal_->pop();
     traversal_->vectorVisited[currentPos_.x][currentPos_.y] = true;
 
-    Point neighbor1 = Point(currentPos_.x + 1, currentPos_.y);
-    Point neighbor2 = Point(currentPos_.x, currentPos_.y + 1);
-    Point neighbor3 = Point(currentPos_.x - 1, currentPos_.y);
-    Point neighbor4 = Point(currentPos_.x, currentPos_.y - 1);
+    Point neighborRight = Point(currentPos_.x + 1, currentPos_.y);
+    Point neighborDown = Point(currentPos_.x, currentPos_.y + 1);
+    Point neighborLeft = Point(currentPos_.x - 1, currentPos_.y);
+    Point neighborUp = Point(currentPos_.x, currentPos_.y - 1);
 
-    traversal_->add(neighbor1);
-    traversal_->add(neighbor2);
-    traversal_->add(neighbor3);
-    traversal_->add(neighbor4);
+    traversal_->add(neighborRight);
+    traversal_->add(neighborDown);
+    traversal_->add(neighborLeft);
+    traversal_->add(neighborUp);
 
     if(traversal_->empty() == true){
       return *this;
@@ -94,26 +96,8 @@ Point ImageTraversal::Iterator::operator*() {
  */
 bool ImageTraversal::Iterator::operator!=(const ImageTraversal::Iterator &other) {
   /** @todo [Part 1] */
-  bool end, otherEnd;
-  if(traversal_ == NULL || (traversal_->empty() == true)){
-    end = true;
-  }
-  else{
-    end = false;
-  }
-  if(other.traversal_ == NULL || (other.traversal_->empty() == true)){
-    otherEnd = true;
-  }
-  else{
-    otherEnd = false;
-  }
-  if(end == otherEnd){
+  if(traversal_->empty()){
     return false;
   }
-  if(currentPos_ == other.currentPos_){
-    return false;
-  }
-  else{
-    return true;
-  }
+  return true;
 }

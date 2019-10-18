@@ -37,12 +37,13 @@ public:
 
     /** @todo [Part 1] */
     /** add member functions if neccesary*/
-    Iterator(ImageTraversal* traversal, Point start);
+    Iterator(ImageTraversal* traversal, Point start, double tolerance);
   private:
     /** @todo [Part 1] */
     /** add private members here if neccesary*/
     ImageTraversal* traversal_;
     Point currentPos_;
+    double tolerance_;
   };
 
   /**

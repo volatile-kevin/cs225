@@ -58,5 +58,25 @@ void FloodFilledImage::addFloodFill(ImageTraversal & traversal, ColorPicker & co
 Animation FloodFilledImage::animate(unsigned frameInterval) const {
   Animation animation;
   /** @todo [Part 2] */
+  animation.addFrame(*png_);
+  for(unsigned i = 0; i < traversal_.size(); i++){
+    ImageTraversal::Iterator beginning = traversal_.at(i)->begin();
+    ImageTraversal::Iterator end = traversal_.at(i)->end();
+    unsigned interval = 0;
+    for(ImageTraversal::Iterator it = beginning; it != end; ++it){
+      if(interval == frameInterval){
+        interval = 0;
+        animation.addFrame(*png_);
+      }
+      HSLAPixel &old = png_->getPixel((*it).x, (*it).y);
+      HSLAPixel p = colorPicker_.at(i)->getColor((*it).x, (*it).y);
+      old.a = p.a;
+      old.l = p.l;
+      old.s = p.s;
+      old.h = p.h;
+      interval++;
+    }
+    animation.addFrame(*png_);
+  }
   return animation;
 }

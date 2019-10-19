@@ -131,6 +131,8 @@ class AVLTree
      */
     Node* root;
 
+
+    int updateHeight(Node*& node);
     /**
      * Private helper function for the public #insert function.
      * @param node The current node in the recursion

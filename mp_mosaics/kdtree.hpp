@@ -154,9 +154,56 @@ Point<Dim> KDTree<Dim>::findNearestNeighbor(const Point<Dim>& query) const
     /**
      * @todo Implement this function!
      */
-    double arr[3] = {1, 1, 1};
-    // Dim = 3;
-    Point<Dim> finesse = Point<Dim>(arr);
+     Point<Dim> currBest = root->point;
+     Point<Dim> q = query;
+     helpNN(root, currBest, 0, q);
+     return currBest;
+}
 
-    return finesse;
+template <int Dim>
+void KDTree<Dim>::helpNN(KDTreeNode* curr, Point<Dim> &currBest , int dim, Point<Dim> &query) const{
+
+  KDTreeNode* next;
+  KDTreeNode* temp;
+  double dist = 0;
+  if(curr == NULL){
+    return;
+  }
+
+  if(smallerDimVal(curr->point, query, dim)){
+    temp = curr->left;
+    next = curr->right;
+  }
+  else{
+    temp = curr->right;
+    next = curr->left;
+  }
+
+  helpNN(next, currBest, (dim+1)%Dim, query);
+  if(shouldReplace(query, currBest, curr->point)){
+    currBest = curr->point;
+  }
+
+  if(checkDist(curr, currBest, dim, query)){
+    helpNN(temp, currBest, (dim+1)%Dim, query);
+  }
+
+}
+
+template <int Dim>
+bool KDTree<Dim>::checkDist(KDTreeNode* curr, Point<Dim> &currBest , int dim, Point<Dim> &query) const{
+  double dist = 0;
+  double dist2 = 0;
+
+  for(int i = 0; i < Dim; i++){
+    dist += (currBest[i] - query[i])*(currBest[i] - query[i]);
+  }
+
+  dist2 = (curr->point[dim] - query[dim])*(curr->point[dim] - query[dim]);
+  if(dist >= dist2){
+    return true;
+  }
+  else{
+    return false;
+  }
 }

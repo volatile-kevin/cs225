@@ -260,6 +260,8 @@ class KDTree
      void quickSelect(int start, int end, int dim, int k);
      int partition(int start, int end, int dim, int pivotIndex);
      KDTreeNode* createKD(int start, int end, int dim);
+     bool checkDist(KDTreeNode* curr, Point<Dim> &currBest , int dim, Point<Dim> &query) const;
+     void helpNN(KDTreeNode* curr_node, Point<Dim> &currentBest, int dim, Point<Dim> &query) const;
     /**
      * @todo Add your helper functions here.
      */

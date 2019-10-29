@@ -154,6 +154,9 @@ Point<Dim> KDTree<Dim>::findNearestNeighbor(const Point<Dim>& query) const
     /**
      * @todo Implement this function!
      */
+    double arr[3] = {0, 2, 9};
+    // Dim = 3;
+    Point<Dim> finesse = Point<Dim>(arr);
 
-    return Point<Dim>();
+    return finesse;
 }

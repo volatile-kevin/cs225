@@ -244,7 +244,7 @@ class KDTree
                    int modWidth = -1) const;
 
   private:
-
+    vector<Point<Dim>> treeNodes;
     /** Internal representation, root and size **/
     KDTreeNode *root;
     size_t size;
@@ -256,6 +256,10 @@ class KDTree
     void printTree(KDTreeNode * subroot, std::vector<std::string>& output,
                    int left, int top, int width, int currd) const;
 
+
+     void quickSelect(int start, int end, int dim, int k);
+     int partition(int start, int end, int dim, int pivotIndex);
+     KDTreeNode* createKD(int start, int end, int dim);
     /**
      * @todo Add your helper functions here.
      */

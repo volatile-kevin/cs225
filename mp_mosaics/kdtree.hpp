@@ -53,11 +53,75 @@ bool KDTree<Dim>::shouldReplace(const Point<Dim>& target,
 }
 
 template <int Dim>
+typename KDTree<Dim>::KDTreeNode* KDTree<Dim>::createKD(int start, int end, int dim){
+
+  if(start > end){
+    return NULL;
+  }
+  else{
+    int median = (start + end)/2;
+    quickSelect(start, end, dim, median);
+    KDTreeNode* ptr = new KDTreeNode(treeNodes[median]);
+
+    ptr->left = createKD(start, median-1, (dim+1)%Dim);
+    ptr->right = createKD(median+1, end, (dim+1)%Dim);
+    return ptr;
+  }
+
+}
+
+template <int Dim>
+void KDTree<Dim>::quickSelect(int start, int end, int dim, int k){
+
+  if(start > end){
+    return;
+  }
+  int mid = (start + end)/2;
+  int pivot = partition(start, end, dim, mid);
+  if(k > pivot){
+    return quickSelect(pivot+1, end, dim, k);
+  }
+  else if(k < pivot){
+    return quickSelect(start, pivot-1, dim, k);
+  }
+}
+
+template <int Dim>
+int KDTree<Dim>::partition(int start, int end, int dim, int pivotIndex){
+  Point<Dim> pivot = treeNodes[pivotIndex];
+
+  std::swap(treeNodes[pivotIndex], treeNodes[end]);
+  int pI = start;
+  int i;
+
+  for(i = start; i < end; i++){
+    if(smallerDimVal(treeNodes[i], pivot, dim)){
+      std::swap(treeNodes[i], treeNodes[pI]);
+      pI++;
+    }
+  }
+
+  std::swap(treeNodes[pI], treeNodes[end]);
+  return pI;
+
+}
+
+template <int Dim>
 KDTree<Dim>::KDTree(const vector<Point<Dim>>& newPoints)
 {
     /**
      * @todo Implement this function!
      */
+     treeNodes = newPoints;
+     if(newPoints.size() != 0){
+       root = createKD(0, newPoints.size()-1, 0);
+     }
+     else{
+       root = NULL;
+       return;
+     }
+
+
 }
 
 template <int Dim>

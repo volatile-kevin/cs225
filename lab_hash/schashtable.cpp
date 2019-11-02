@@ -4,7 +4,7 @@
  */
 
 #include "schashtable.h"
-
+using namespace std;
 template <class K, class V>
 SCHashTable<K, V>::SCHashTable(size_t tsize)
 {
@@ -54,19 +54,38 @@ void SCHashTable<K, V>::insert(K const& key, V const& value)
      * @todo Implement this function.
      *
      */
+
+     elems++;
+     if(shouldResize()){
+       resizeTable();
+     }
+     pair<K, V> p(key, value);
+     size_t i = hashes::hash(key, size);
+     table[i].push_front(p);
 }
 
 template <class K, class V>
 void SCHashTable<K, V>::remove(K const& key)
 {
-    typename std::list<std::pair<K, V>>::iterator it;
-    /**
-     * @todo Implement this function.
-     *
-     * Please read the note in the lab spec about list iterators and the
-     * erase() function on std::list!
-     */
-    (void) key; // prevent warnings... When you implement this function, remove this line.
+      if(keyExists(key) == false){
+        return;
+      }
+      typename list<pair<K, V>>::iterator it;
+      /**
+       * @todo Implement this function.
+       *
+       * Please read the note in the lab spec about list iterators and the
+       * erase() function on std::list!
+       */
+
+       size_t i = hashes::hash(key, size);
+       for(it = table[i].begin(); it != table[i].end(); it++) {
+         if(it->first == key) {
+           table[i].erase(it);
+           break;
+         }
+       }
+       --elems;
 }
 
 template <class K, class V>
@@ -77,6 +96,13 @@ V SCHashTable<K, V>::find(K const& key) const
      * @todo: Implement this function.
      */
 
+    typename list<pair<K, V>>::iterator it;
+    size_t i = hashes::hash(key, size);
+    for(it = table[i].begin(); it != table[i].end(); it++) {
+      if(it->first == key){
+        return it->second;
+      }
+    }
     return V();
 }
 
@@ -134,4 +160,17 @@ void SCHashTable<K, V>::resizeTable()
      *
      * @hint Use findPrime()!
      */
+     size_t newSize = findPrime(size << 1);
+     std::list<std::pair<K, V>>* newTable = new std::list<std::pair<K, V>>[newSize];
+     for(size_t i = 0; i < size; i++) {
+       for(it = table[i].begin(); it != table[i].end(); it++) {
+         size_t newIdx = hashes::hash(it->first, newSize);
+         std::pair<K, V> p(it->first, it->second);
+         newTable[newIdx].push_front(p);
+       }
+     }
+     delete[] table;
+     table = newTable;
+     size = newSize;
+     return;
 }

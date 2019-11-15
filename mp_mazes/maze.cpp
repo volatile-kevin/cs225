@@ -282,7 +282,118 @@ PNG* SquareMaze::drawMazeWithSolution(){
   return canvas;
 }
 
-PNG* SquareMaze::drawCreativeMaze(){
-  PNG* canvas = drawMaze();
-  return canvas;
+PNG* SquareMaze::drawCreativeMaze(int width, int height){
+  // srand(10);
+  // makeMaze(width, height);
+  // PNG* result = new PNG(width*10 + 1, height*10 + 1);
+  // pngH = result->height();
+  // pngW = result->width();
+  // for(unsigned x = 0; x < pngW; x++){
+  //
+  // }
+  std::srand(42);
+	makeMaze(width, height);
+	PNG* result = new PNG(width*10 + 1, height*10 + 1);
+	//left most column
+	for (unsigned int y = 0; y < result->height(); y++) {
+		result->getPixel(0, y).l = 0;
+	}
+
+	//top most row
+	for (unsigned int x = 0; x < result->width(); x++) {
+		if (x > 9 || x < 1) {
+			result->getPixel(x, 0).l = 0;
+		}
+	}
+
+	//for each square in the maze,
+	for (int x = 0; x < width; x++) {
+		for (int y = 0; y < height; y++) {
+			if (rightWalls[(y * width) + x]) {
+				//if the right wall exists, blacken ((x+1)*10, y*10 + k) from k = 0 to 10
+				for (int k = 0; k < 11; k++) {
+					result->getPixel((x+1) * 10, y * 10 + k).l = 0;
+				}
+			}
+
+			if (downWalls[(y * width) + x]) {
+				//if the down wall exists, blacken ((x*10 + k, (y+1)*10) from k = 0 to 10
+				for (int k = 0; k < 11; k++) {
+					result->getPixel(x*10 + k, (y+1)*10).l = 0;
+				}
+			}
+		}
+	}
+
+  for (unsigned int x = 0; x < result->width(); x++) {
+  		for (unsigned int y = 0; y < result->height(); y++) {
+
+
+  				if (x >= 1000 && x <= 2200) {
+  					if (y <= 400 && y >= 0) {
+  						result->getPixel(x, y).l = 0.5;
+  						result->getPixel(x, y).h = 11;
+  						result->getPixel(x, y).s = 0.7;
+  					}
+  				}
+
+  				if (x >= (1000+350) && x <= (2200-350)) {
+  					if(y > 400 && y <= 1200) {
+  						result->getPixel(x,y).l = 0.5;
+  						result->getPixel(x,y).h = 11;
+  						result->getPixel(x, y).s = 0.7;
+  					}
+  				}
+
+  				if (x >= 1000 && x <= 2200) {
+  					if (y <= 1600 && y >= 1200) {
+  						result->getPixel(x,y).l = 0.5;
+  						result->getPixel(x,y).h = 11;
+  						result->getPixel(x, y).s = 0.7;
+  					}
+  				}
+
+  		}
+  	}
+
+	std::vector<int> solVec = solveMaze();
+
+	int poox = 5;
+	int pooy = 5;
+	for (int direction : solVec) {
+		int incX = 0;
+		int incY = 0;
+		if (direction == 0) {
+			incX = 1;
+		}
+		else if (direction == 1) {
+			incY = 1;
+		}
+		else if (direction == 2) {
+			incX = -1;
+		}
+		else if (direction == 3) {
+			incY = -1;
+		}
+
+		for (int i = 0; i <= 10; i++) {
+			HSLAPixel & pp = result->getPixel(poox, pooy);
+			pp.h = 0;
+			pp.s = 1;
+			pp.l = 0.5;
+			pp.a = 1;
+
+			poox += incX;
+			pooy += incY;
+		}
+
+		poox -= incX;
+		pooy -= incY;
+	}
+
+	for (int k = 1; k <= 9; k++) {
+		result->getPixel((poox/10)*10 + k, ((pooy/10)+1)*10).l = 1;
+	}
+
+	return result;
 }

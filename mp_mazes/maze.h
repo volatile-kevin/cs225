@@ -19,7 +19,7 @@ public:
   vector<int> solveMaze();
   PNG* drawMaze() const;
   PNG* drawMazeWithSolution();
-  PNG* drawCreativeMaze();
+  PNG* drawCreativeMaze(int width, int height);
 
   int width_, height_, destination;
   DisjointSets mazeSets;

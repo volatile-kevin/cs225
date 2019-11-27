@@ -25,7 +25,34 @@
  * @param startingTokens The number of starting tokens in the game of Nim.
  */
 NimLearner::NimLearner(unsigned startingTokens) : g_(true, true) {
+
     /* Your code goes here! */
+
+    tokens_ = startingTokens;
+    for(unsigned i = 0; i <= startingTokens; i++){
+      g_.insertVertex("p1-"+to_string(i));
+      g_.insertVertex("p2-"+to_string(i));
+      if(i >= 2){
+
+        g_.insertEdge("p1-"+to_string(i), "p2-"+to_string(i - 1));
+        g_.insertEdge("p1-"+to_string(i), "p2-"+to_string(i - 2));
+        g_.insertEdge("p2-"+to_string(i), "p1-"+to_string(i - 1));
+        g_.insertEdge("p2-"+to_string(i), "p1-"+to_string(i - 2));
+
+        g_.setEdgeWeight("p1-"+to_string(i), "p2-"+to_string(i - 1), 0);
+        g_.setEdgeWeight("p1-"+to_string(i), "p2-"+to_string(i - 2), 0);
+        g_.setEdgeWeight("p2-"+to_string(i), "p1-"+to_string(i - 1), 0);
+        g_.setEdgeWeight("p2-"+to_string(i), "p1-"+to_string(i - 2), 0);
+      }
+      else if(i == 1){
+        g_.insertEdge("p1-"+to_string(i),"p2-0");
+        g_.insertEdge("p2-"+to_string(i),"p1-0");
+
+        g_.setEdgeWeight("p1-"+to_string(i),"p2-0", 0);
+        g_.setEdgeWeight("p2-"+to_string(i),"p1-0", 0);
+      }
+    }
+
 }
 
 /**
@@ -40,6 +67,14 @@ NimLearner::NimLearner(unsigned startingTokens) : g_(true, true) {
 std::vector<Edge> NimLearner::playRandomGame() const {
   vector<Edge> path;
  /* Your code goes here! */
+  Vertex temp;
+  Vertex current = "p1-"+to_string(tokens_);
+  while(current != "p1-0" && current != "p2-0"){
+    vector<Vertex> tempV = g_.getAdjacent(current);
+    temp = tempV[rand() % tempV.size()];
+    path.push_back(g_.getEdge(current, temp));
+    current = temp;
+  }
   return path;
 }
 
@@ -61,6 +96,26 @@ std::vector<Edge> NimLearner::playRandomGame() const {
  */
 void NimLearner::updateEdgeWeights(const std::vector<Edge> & path) {
  /* Your code goes here! */
+  if(path[path.size()-1].dest == "p2-0"){
+    for(unsigned i = 0; i < path.size(); i++){
+      if(path[i].source.substr(0,2) == "p1"){
+        g_.setEdgeWeight(path[i].source, path[i].dest, path[i].getWeight() + 1);
+      }
+      else{
+        g_.setEdgeWeight(path[i].source, path[i].dest, path[i].getWeight() - 1);
+      }
+    }
+  }
+  else{
+    for(unsigned i = 0; i < path.size(); i++){
+      if(path[i].source.substr(0, 2) == "p2"){
+        g_.setEdgeWeight(path[i].source, path[i].dest, path[i].getWeight() + 1);
+      }
+      else{
+        g_.setEdgeWeight(path[i].source, path[i].dest, path[i].getWeight() - 1);
+      }
+    }
+  }
 }
 
 /**

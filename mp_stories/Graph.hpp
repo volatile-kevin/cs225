@@ -23,7 +23,7 @@ unsigned int Graph<V,E>::numVertices() const {
 template <class V, class E>
 unsigned int Graph<V,E>::degree(const V & v) const {
   // TODO: Part 2
-  return adjList.find(v)->size();
+  return adjList.at(v.key()).size();
 }
 
 
@@ -35,7 +35,10 @@ unsigned int Graph<V,E>::degree(const V & v) const {
 template <class V, class E>
 V & Graph<V,E>::insertVertex(std::string key) {
   // TODO: Part 2
+  std::list<edgeListIter> empty;
   V & v = *(new V(key));
+  vertexMap.emplace(key, v);
+  adjList.emplace(key, empty);
   return v;
 }
 
@@ -47,6 +50,12 @@ V & Graph<V,E>::insertVertex(std::string key) {
 template <class V, class E>
 void Graph<V,E>::removeVertex(const std::string & key) {
   // TODO: Part 2
+  // maybe
+  std::list<std::reference_wrapper<E>> edges = incidentEdges(key);
+  for(edgeListIter iter = edges.begin(); iter != edges.end(); ++iter){
+    removeEdge(iter);
+  }
+  vertexMap.erase(key);
 }
 
 
@@ -60,7 +69,10 @@ template <class V, class E>
 E & Graph<V,E>::insertEdge(const V & v1, const V & v2) {
   // TODO: Part 2
   E & e = *(new E(v1, v2));
-
+  edgeList.push_front(e);
+  edgeListIter iter = edgeList.begin();
+  adjList.at(v1.key()).push_front(iter);
+  adjList.at(v2.key()).push_front(iter);
   return e;
 }
 
@@ -74,6 +86,13 @@ E & Graph<V,E>::insertEdge(const V & v1, const V & v2) {
 template <class V, class E>
 void Graph<V,E>::removeEdge(const std::string key1, const std::string key2) {
   // TODO: Part 2
+  for(edgeListIter iter = edgeList.begin(); iter != edgeList.end(); ++iter){
+    Edge e = *iter;
+    if((e.source().key() == key2 && e.dest().key() == key1 && e.directed()) || (e.source().key() == key1 && e.dest().key() == key2 )){
+      removeEdge(iter);
+      break;
+    }
+  }
 }
 
 
@@ -85,6 +104,12 @@ void Graph<V,E>::removeEdge(const std::string key1, const std::string key2) {
 template <class V, class E>
 void Graph<V,E>::removeEdge(const edgeListIter & it) {
   // TODO: Part 2
+  Edge edge = *it;
+  Vertex src = edge.source();
+  Vertex dest = edge.dest();
+  adjList.at(src.key()).remove(it);
+  adjList.at(dest.key()).remove(it);
+  edgeList.erase(it);
 }
 
 

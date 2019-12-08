@@ -22,19 +22,40 @@ NetworkFlow::NetworkFlow(Graph & startingGraph, Vertex source, Vertex sink) :
   g_(startingGraph), residual_(Graph(true,true)), flow_(Graph(true,true)), source_(source), sink_(sink) {
 
   // YOUR CODE HERE
+  maxFlow_ = 0;
+  vector<Edge> edges = g_.getEdges();
+  vector<Vertex> vertices = g_.getVertices();
+
+
+
+  for(Vertex v: vertices){
+    residual_.insertVertex(v);
+    flow_.insertVertex(v);
+  }
+
+  for(Edge e : edges){
+    residual_.insertEdge(e.source, e.dest);
+    residual_.setEdgeWeight(e.source, e.dest, e.getWeight());
+    residual_.insertEdge(e.dest, e.source);
+    residual_.setEdgeWeight(e.dest, e.source, 0);
+    flow_.insertEdge(e.source, e.dest);
+    flow_.setEdgeWeight(e.source, e.dest, 0);
+
+  }
+
 }
 
   /**
    * findAugmentingPath - use DFS to find a path in the residual graph with leftover capacity.
    *  This version is the helper function.
    *
-   * @param source  The starting (current) vertex
-   * @param sink    The destination vertex
-   * @param path    The vertices in the path
-   * @param visited A set of vertices we have visited
+   * @@params: source -- The starting (current) vertex
+   * @@params: sink   -- The destination vertex
+   * @@params: path   -- The vertices in the path
+   * @@params: visited -- A set of vertices we have visited
    */
 
-bool NetworkFlow::findAugmentingPath(Vertex source, Vertex sink, 
+bool NetworkFlow::findAugmentingPath(Vertex source, Vertex sink,
   std::vector<Vertex> &path, std::set<Vertex> &visited) {
 
   if (visited.count(source) != 0)
@@ -64,9 +85,9 @@ bool NetworkFlow::findAugmentingPath(Vertex source, Vertex sink,
    * findAugmentingPath - use DFS to find a path in the residual graph with leftover capacity.
    *  This version is the main function.  It initializes a set to keep track of visited vertices.
    *
-   * @param source The starting (current) vertex
-   * @param sink   The destination vertex
-   * @param path   The vertices in the path
+   * @@params: source -- The starting (current) vertex
+   * @@params: sink   -- The destination vertex
+   * @@params: path   -- The vertices in the path
    */
 
 bool NetworkFlow::findAugmentingPath(Vertex source, Vertex sink, std::vector<Vertex> &path) {
@@ -79,12 +100,28 @@ bool NetworkFlow::findAugmentingPath(Vertex source, Vertex sink, std::vector<Ver
   /**
    * pathCapacity - Determine the capacity of a path in the residual graph.
    *
-   * @param path   The vertices in the path
+   * @@params: path   -- The vertices in the path
    */
 
 int NetworkFlow::pathCapacity(const std::vector<Vertex> & path) const {
   // YOUR CODE HERE
-  return 0;
+    Edge e = residual_.getEdge(path[0], path[1]);
+    int min_weight = e.getWeight();
+    size_t i = 0;
+    size_t size = path.size()-1;
+    while(i < size){
+      Edge e = residual_.getEdge(path[i], path[i + 1]);
+      int weight = e.getWeight();
+      if(weight > min_weight){
+        i++;
+        continue;
+      }
+      else{
+        min_weight = weight;
+        i++;
+      }
+    }
+    return min_weight;
 }
 
   /**
@@ -92,11 +129,38 @@ int NetworkFlow::pathCapacity(const std::vector<Vertex> & path) const {
    * Sets the member function `maxFlow_` to be the flow, and updates the
    * residual graph and flow graph according to the algorithm.
    *
-   * @return The network flow graph.
+   * @@outputs: The network flow graph.
    */
 
 const Graph & NetworkFlow::calculateFlow() {
   // YOUR CODE HERE
+  vector<Vertex> path;
+  while(findAugmentingPath(source_, sink_, path)){
+    Edge e;
+    int capacity = pathCapacity(path);
+    maxFlow_ += capacity;
+    size_t i = 0;
+    size_t size = path.size()-1;
+    while(i < size){
+      //update flow graph
+      if(!flow_.edgeExists(path[i], path[i + 1])){
+        e = flow_.getEdge(path[i + 1], path[i]);
+        flow_.setEdgeWeight(path[i + 1], path[i], e.getWeight() - capacity);
+      }
+      else{
+        e = flow_.getEdge(path[i], path[i + 1]);
+        flow_.setEdgeWeight(path[i], path[i + 1], e.getWeight() + capacity);
+      }
+
+      e = residual_.getEdge(path[i + 1], path[i]);
+      residual_.setEdgeWeight(path[i + 1], path[i], e.getWeight() + capacity);
+
+      
+      e = residual_.getEdge(path[i], path[i + 1]);
+      residual_.setEdgeWeight(path[i], path[i + 1], e.getWeight() - capacity);
+      i++;
+    }
+  }
   return flow_;
 }
 
@@ -115,4 +179,3 @@ const Graph & NetworkFlow::getFlowGraph() const {
 const Graph & NetworkFlow::getResidualGraph() const {
   return residual_;
 }
-

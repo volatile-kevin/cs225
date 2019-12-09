@@ -35,6 +35,7 @@ unsigned int Graph<V,E>::degree(const V & v) const {
 template <class V, class E>
 V & Graph<V,E>::insertVertex(std::string key) {
   // TODO: Part 2
+  std::list<edgeListIter> empty;
   V & v = *(new V(key));
   vertexMap.emplace(key, v);
   adjList[key] = std::list<edgeListIter>();

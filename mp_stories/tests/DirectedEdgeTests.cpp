@@ -10,7 +10,7 @@ Graph<Vertex, DirectedEdge> createTestDiGraph() {
         /   |  /           |
        /    v /            v
       a <-- c -> e    f -> g
-        \       / 
+        \       /
          -> d <-
   */
 
@@ -58,7 +58,7 @@ TEST_CASE("Graphs with `DirectedEdge`s have directed edges", "[weight=1]") {
   g.insertVertex("a");
   g.insertVertex("b");
   g.insertEdge("a", "b");
-  
+
   REQUIRE( g.incidentEdges("a").front().get().directed() == true );
 }
 

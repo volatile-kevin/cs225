@@ -23,41 +23,31 @@ std::list<std::string> Graph<V,E>::shortestPath(const std::string start, const s
   // TODO: Part 3
   std::list<std::string> path;
 
+  bool found = false;
+
   std::queue<std::string> q;
   q.push(start);
 
-  std::unordered_map<std::string, std::string> theRents;
-  theRents.insert({start, start});
+  std::unordered_map<string, string> pred;
+  pred.insert({start, start})
+    while(!found){
+      std::string current = q.front();
+      q.pop();
 
-  int visited = 0;
-  int poopscoophoopitydoop = 0;
-  while(visited == 0){
-    std::string curr = q.front();
-    q.pop();
-
-    std::list<std::reference_wrapper<E>> edges = incidentEdges(curr);
-    for(Edge & e : edges){
-      if(theRents.find(e.source().key()) == theRents.end()){
-        q.push(e.source().key());
-        theRents.insert({e.source().key(), e.dest().key()});
-      }
-      if(theRents.find(e.dest().key()) == theRents.end()){
-        q.push(e.dest().key());
-        theRents.insert({e.dest().key(), e.source().key()});
-      }
-      if(e.source().key() == end || e.dest().key() == end){
-        visited = 1;
+      for(Edge & e : EList){
+        if(e.dest().key() == end || e.source().key() == end){
+          found = true;
+        }
+        if(parent.find(e.dest().key()) == parent.end()){
+          q.push(e.dest().key());
+          parent.insert({e.dest().key(), e.source().key()});
+        }
+        if(parent.find(e.source().key()) == parent.end()){
+          q.push(e.source().key());
+          parent.insert({e.source().key(), e.dest().key()});
+        }
       }
     }
-  }
 
-  std::string tempPoo = end;
-  while(!poopscoophoopitydoop){
-    if(tempPoo == start){
-      poopscoophoopitydoop = 1;
-    }
-    path.push_front(tempPoo);
-    tempPoo = theRents.at(tempPoo);
-  }
   return path;
 }

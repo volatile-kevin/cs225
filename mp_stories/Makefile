@@ -8,7 +8,7 @@ EXE_OBJ = main.o
 OBJS = main.o CYOA.o
 
 # Generated files
-CLEAN_RM = 
+CLEAN_RM =
 
 # Use the cs225 makefile template:
 include cs225/make/cs225.mk
